@@ -1,0 +1,8 @@
+*.o
+.DB_*
+*.swp
+*.tmp
+.idea*
+*.jar
+*Cache
+*~
