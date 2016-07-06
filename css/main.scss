@@ -1,0 +1,51 @@
+$field-width: 500px;
+$grid-spacing: 15px;
+$grid-row-cells: 4;
+$tile-size: ($field-width - $grid-spacing * ($grid-row-cells + 1)) / $grid-row-cells;
+$tile-border-radius: 15px;
+$tile-color:#111111;
+
+
+body {
+  margin: 80px 0;
+}
+
+.container{
+  margin-left: auto;
+  margin-right: auto;
+  width:$field-width;
+}
+
+.grid-container {
+  position: absolute;
+  z-index: 1;
+}
+
+.grid-row {
+  margin-bottom: $grid-spacing;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+}
+
+.grid-cell {
+  width: $tile-size;
+  height: $tile-size;
+  margin-right: $grid-spacing;
+  float: left;
+
+  border-radius: $tile-border-radius;
+
+  background: rgba($tile-color, .35);
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
