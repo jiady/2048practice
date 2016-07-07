@@ -14,17 +14,24 @@ AnimationManger.prototype.addTile=function(tile){
     classes.push(this.positionClass(tile.position));
 
     this.setClass(wrapper,classes);
-    wrapper.innerHTML=2;
+    wrapper.innerHTML=tile.value;
+
     this.tileContainer.appendChild(wrapper);
-    this.tileBoard[tile.position]=wrapper;
+    this.tileBoard[tile.id]=wrapper;
+    console.log("tile id added:"+tile.id);
 };
 
-AnimationManger.prototype.moveTile=function(tile,position){
+AnimationManger.prototype.removeTile=function(id){
+    this.tileContainer.removeChild(this.tileBoard[id]);
+    delete this.tileBoard[id];
+}
 
+
+AnimationManger.prototype.moveTile=function(id,position){
+    console.log("move tile id: "+id+" x: "+position.x+" y: "+position.y);
     var classes=['tile'];
     classes.push(this.positionClass(position));
-    this.setClass(this.tileBoard[tile.position],classes);
-
+    this.setClass( this.tileBoard[id],classes);
 };
 
 

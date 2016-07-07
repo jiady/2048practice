@@ -22,32 +22,42 @@ function GameManager(size,InputManager,AnimationManger){
 
 GameManager.prototype.initBoard=function(){
     this.gameBoard=new Array(this.size);
+    this.tileHash={};
     for(var i=0;i<this.size;i++){
         this.gameBoard[i]=new Array(this.size);
         for(var j=0;j<this.size;j++){
             this.gameBoard[i][j]=0;
         }
     }
-    this.addRandom();
+    this.addRandomSize(2);
 };
 
-
+GameManager.prototype.addRandomSize=function (size){
+    for(var i=0;i<size;i++){
+        this.addRandom();
+    }
+}
 
 GameManager.prototype.addRandom=function () {
     var tile={};
     tile.position=this.generate();
     tile.value=Math.random()>0.9?4:2;
-    this.gameBoard[tile.position.y][tile.position.x]=tile.value;
-    this.AnimationManger.addTile(tile);
-    return tile;
+    this.addTile(tile);
 };
+
+GameManager.prototype.addTile=(function() {
+    var id=0;
+    return function (tile) {
+        id++;
+        tile.id=id;
+        this.gameBoard[tile.position.y][tile.position.x] = tile.id;
+        this.tileHash[tile.id]=tile;
+        this.AnimationManger.addTile(tile);
+    }
+})();
 
 GameManager.prototype.generate=function(){
     var positions=this.getAvailableCell();
-    positions.forEach(function (p) {
-        //console.log(p.x,p.y);
-    });
-
     return positions[Math.floor(Math.random() * positions.length)];
 };
 
@@ -67,35 +77,44 @@ GameManager.prototype.getAvailableCell=function(){
 
 GameManager.prototype.getDirection=function(key){
     switch (key){
-        case 0:return [0,-1];
-        case 1:return [1,0];
-        case 2:return [0,1];
-        case 3:return [-1,0];
+        case 0:return {x:0,y:-1};
+        case 1:return {x:1,y:0};
+        case 2:return {x:0,y:1};
+        case 3:return {x:-1,y:0};
     }
-    return [0,1];
+    return {x:0,y:1};
 };
 
-GameManager.prototype.move=function(key){
 
+
+GameManager.prototype.move=function(key){
     var direction=this.getDirection(key);
     var traversal=this.Traversal(direction);
     var self=this;
     traversal.x.forEach(function(x){
         traversal.y.forEach(function (y) {
-            console.log(self.gameBoard[y][x])
+            //console.log(self.gameBoard[y][x])
+            var not;
             if(self.gameBoard[y][x]!=0) {
-                var next = self.GoOnDirection([x, y], direction);
-                var tile = new Tile(self.gameBoard[y][x],x,y);
-                self.gameBoardMove(tile,{x:next[0],y:next[1]});
-                self.AnimationManger.moveTile(tile,{x:next[0],y:next[1]});
+                var next = self.GoOnDirection({x:x, y:y}, direction);
+                self.AnimationManger.moveTile(self.gameBoard[y][x],next);
+                if(next.x!=x || next.y!=y)
+                 self.gameBoardMove({x:x,y:y},next);
             }
         });
     });
 };
 
-GameManager.prototype.gameBoardMove=function(tile,position){
-    this.gameBoard[tile.position.y][tile.position.x]=0;
-    this.gameBoard[position.y][position.x]=tile.value;
+GameManager.prototype.gameBoardMove=function(positionFrom,position){
+    //assume position and positionFrom are not equal
+    this.gameBoard[position.y][position.x]=this.gameBoard[positionFrom.y][positionFrom.x];
+    if(position.y!=positionFrom.y || position.x !=positionFrom.x)
+        this.gameBoard[positionFrom.y][positionFrom.x]=0;
+}
+
+GameManager.prototype.removeTile=function(position){
+    this.AnimationManger.removeTile(this.gameBoard[position.y][position.x]);
+    this.gameBoard[position.y][position.x]=0;
 }
 
 GameManager.prototype.Traversal=function(direction){
@@ -104,8 +123,8 @@ GameManager.prototype.Traversal=function(direction){
         traversal.x.push(i);
         traversal.y.push(i);
     }
-    if(direction[0]==1) traversal.x.reverse();
-    if(direction[1]==1) traversal.y.reverse();
+    if(direction.x==1) traversal.x.reverse();
+    if(direction.y==1) traversal.y.reverse();
     return traversal;
 };
 
@@ -120,15 +139,15 @@ GameManager.prototype.GoOnDirection=function(origin, direction){
 };
 
 GameManager.prototype.inside=function(point){
-    if(point[0]>=0 && point[0]<this.size && point[1]>=0 && point[1]<this.size){
-        if(this.gameBoard[point[1]][point[0]]==0)
+    if(point.x>=0 && point.x<this.size && point.y>=0 && point.y<this.size){
+        if(this.gameBoard[point.y][point.x]==0)
             return true;
     }
     return false;
 };
 
 GameManager.prototype.add=function(origin,direction){
-    return [origin[0]+direction[0], origin[1]+direction[1]];
+    return {x:origin.x+direction.x, y:origin.y+direction.y};
 };
 
 
