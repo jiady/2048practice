@@ -1,10 +1,15 @@
+@import "helper";
+
 $field-width: 500px;
 $grid-spacing: 15px;
 $grid-row-cells: 4;
 $tile-size: ($field-width - $grid-spacing * ($grid-row-cells + 1)) / $grid-row-cells;
 $tile-border-radius: 15px;
 $tile-color:#111111;
+$try-color:#123456;
+$grid-container-color:#FFE5B4;
 
+$transition-speed:100ms;
 
 body {
   margin: 80px 0;
@@ -16,9 +21,22 @@ body {
   width:$field-width;
 }
 
+.game-container{
+  width:$field-width;
+  height:$field-width;
+  background: rgba($grid-container-color,1);
+}
+
 .grid-container {
   position: absolute;
+  padding: $grid-spacing;
   z-index: 1;
+}
+
+.tile-container{
+  position: absolute;
+  padding: $grid-spacing;
+  z-index: 2;
 }
 
 .grid-row {
@@ -38,14 +56,42 @@ body {
 .grid-cell {
   width: $tile-size;
   height: $tile-size;
+  float:left;
   margin-right: $grid-spacing;
-  float: left;
-
   border-radius: $tile-border-radius;
-
   background: rgba($tile-color, .35);
-
   &:last-child {
     margin-right: 0;
+  }
+}
+
+.tile{
+  position:absolute;
+  width: $tile-size;
+  height: $tile-size;
+  text-align: center;
+  font-size: $tile-size/2;
+  line-height:$tile-size;
+  color:#FFFFFF;
+  font-weight: bold;
+  border-radius: $tile-border-radius;
+  background: $try-color;
+  z-index: 10;
+  @include transition($transition-speed,ease-in-out);
+  -webkit-transition-property: -webkit-transform;
+  -moz-transition-property: -moz-transform;
+  transition-property: transform;
+}
+
+
+.tile {
+  @for $x from 1 through $grid-row-cells {
+    @for $y from 1 through $grid-row-cells {
+      &.tile-position-#{$x}-#{$y} {
+        $xPos: floor(($tile-size + $grid-spacing) * ($x - 1));
+        $yPos: floor(($tile-size + $grid-spacing) * ($y - 1));
+        @include transform(translate($xPos, $yPos));
+      }
+    }
   }
 }
