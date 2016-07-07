@@ -21,7 +21,12 @@ AnimationManger.prototype.addTile=function(tile){
     console.log("tile id added:"+tile.id);
 };
 
+AnimationManger.prototype.update=function(id,v){
+    this.tileBoard[id].innerHTML=v;
+}
+
 AnimationManger.prototype.removeTile=function(id){
+    console.log('remove tile id:'+id);
     this.tileContainer.removeChild(this.tileBoard[id]);
     delete this.tileBoard[id];
 }
