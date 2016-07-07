@@ -17,7 +17,7 @@ AnimationManger.prototype.addTile=function(tile){
     wrapper.innerHTML=2;
     this.tileContainer.appendChild(wrapper);
     this.tileBoard[tile.position]=wrapper;
-}
+};
 
 AnimationManger.prototype.moveTile=function(tile,position){
 
@@ -25,13 +25,13 @@ AnimationManger.prototype.moveTile=function(tile,position){
     classes.push(this.positionClass(position));
     this.setClass(this.tileBoard[tile.position],classes);
 
-}
+};
 
 
 AnimationManger.prototype.positionClass=function (position){
     return "tile-position-"+(position.x+1)+"-"+(position.y+1);
-}
+};
 
 AnimationManger.prototype.setClass=function(ele,classes){
     ele.setAttribute("class",classes.join(' '));
-}
+};

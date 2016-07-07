@@ -8,12 +8,11 @@ function InputManger(){
 }
 InputManger.prototype.registerFunction=function(functionName, callback){
     this.functionMap[functionName]=callback;
-}
+};
 
 InputManger.prototype.callFunction=function (functionName,data) {
-    console.log(data);
     this.functionMap[functionName](data);
-}
+};
 
 InputManger.prototype.listen=function(){
     var self=this;
@@ -21,14 +20,14 @@ InputManger.prototype.listen=function(){
         'ArrowUp': 0, // Up
         'ArrowRight': 1, // Right
         'ArrowDown': 2, // Down
-        'ArrowLeft': 3, // Left
-    }
+        'ArrowLeft': 3 // Left
+    };
     document.addEventListener("keydown",function (event) {
         console.log("event key:"+event.key);
         var direction=keymap[event.key];
-        console.log("listen",direction)
-        if(direction){
+        if(direction!=undefined){
+            console.log(direction);
             self.callFunction("move", direction);
         }
-    })
-}
+    });
+};
